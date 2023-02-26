@@ -3,12 +3,12 @@
 
 // Import external stuff (libraries)
 // Import express library
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
 
 // Import OUR stuff (our files, our components)
-const studentsController = require('./controllers/studentsController');
-const studentsControllerV2 = require('./controllers/v2/studentsControllerV2');
+const studentsController = require("./controllers/studentsController");
+const studentsControllerV2 = require("./controllers/v2/studentsControllerV2");
 
 // Init express application
 const app = express();
@@ -19,16 +19,28 @@ const app = express();
 app.use(cors());
 
 // Controllers
-app.use('/students', studentsController);
-app.use('/v2/students', studentsControllerV2);
+app.use("/students", studentsController);
+app.use("/v2/students", studentsControllerV2);
 
 // Define our routes
 
 // Healthcheck route
-app.get('/', (request, response) => {
-  response.status(200).json({ data: 'Service is running' });
+app.get("/", (request, response) => {
+  response.status(200).json({ data: "Service is running" });
 });
 
+// Import and require statements in lines 1-11 not shown here…
+const db = require("./db");
+// Other code for middleware, controllers, healthcheck route not shown here…
 
+app.get("/tests", async (request, response) => {
+  try {
+    const tests = await db.any("SELECT * FROM tests");
+
+    response.status(200).json({ data: tests });
+  } catch (err) {
+    response.status(500).json({ error: err.message });
+  }
+});
 
 module.exports = app;
